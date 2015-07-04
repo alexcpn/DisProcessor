@@ -6,7 +6,7 @@ from pydoc import locate
 import zlib, pickle as pickle
 
 
-class TaskProcessor(object):
+class TaskWorker(object):
     context = None
     socketpull = None
 
@@ -26,30 +26,26 @@ class TaskProcessor(object):
         run = True
         while (run):
             sokcs = dict(poller.poll())
-            #message = self.socketpull.recv_pyobj() better way below
-            z=self.socketpull.recv()
-            p=zlib.decompress(z)
-            message=pickle.loads(p)
-            print("Got a message")
-            workername = message.getprocessor()
-            print("Worker to load is %s" % workername)
-            workerclass = locate(workername)
-            self.processTask(workerclass.process, message)
+            # message = self.socketpull.recv_pyobj() better way below
+            p = self.socketpull.recv()
+            mytask = pickle.loads(p)
+            taskdata = zlib.decompress(mytask.zpyobj)
+            print("Got Task Data- %s" % taskdata)
+            workername = mytask.processorname
+            # yield
+            self.processTask(workername, taskdata)
 
     '''
      Takes in a a function object and the function arguments and executes them
     '''
 
-    def processTask(self, processor, *args):
+    def processTask(self, workername,  *args):
+        print("Worker to load is %s" % workername)
+        workerclass = locate(workername)
         print("Going to process Task")
-        k = processor(*args)
-        # Load the python file wiht this name
+        k = workerclass.process(*args)
 
-    def my_import(name):
-        mod = __import__(name)
-        components = name.split('.')
-        for comp in components[1:]:
-            mod = getattr(mod, comp)
-        return mod
+
+
 
 
