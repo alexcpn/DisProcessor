@@ -14,7 +14,7 @@ class TestTaskWorker(TestCase):
     def test_processTask(self):
         testme = TaskProcessLTE()
         worker = TaskWorker()
-        message = (self,"43")
+        message = [None,"43"]
         testme3g= TaskProcess3G()
         #worker.processTask(testme.process, message)
         worker.processTask('processor.taskexecutors.TaskProcess3G',*message)

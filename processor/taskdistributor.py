@@ -58,23 +58,22 @@ class TaskSender:
         for r in toremove:
             self.tasklist.remove(r)
 
-    def connect(self, port=777, connection="tcp://*"):
-        print("Going to connect to %s:%s" % (connection, port))
-        self.socket.bind("%s:%s" % (connection, port))
-        print("Running TaskSender on port ", port)
-        self.__port = port
-        self.__connection = connection
-
-    def sendmessage(self, pyobj,processorname, port=777, connection="tcp://*"):
+    def sendmessage(self, pyobj,processorname):
         # socket.send_pyobj(mymessage)
         # better way
-        #self.socket.connect("%s:%s" % (connection, port))
         z = zlib.compress(pyobj)
         task = Task(z,processorname)
         self.tasklist.append(task)
         p = pickle.dumps(task)
         self.socket.send(p)
         print("Send the message")
+
+    def connect(self, port=777, connection="tcp://*"):
+        print("Going to connect to %s:%s" % (connection, port))
+        self.socket.bind("%s:%s" % (connection, port))
+        print("Running TaskSender on port ", port)
+        self.__port = port
+        self.__connection = connection
 
 
 if __name__ == '__main__':

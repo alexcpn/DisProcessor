@@ -29,11 +29,12 @@ class TaskWorker(object):
             # message = self.socketpull.recv_pyobj() better way below
             p = self.socketpull.recv()
             mytask = pickle.loads(p)
-            taskdata = zlib.decompress(mytask.zpyobj)
+            taskdata=zlib.decompress(mytask.zpyobj)
+            args = [None,taskdata]
             print("Got Task Data- %s" % taskdata)
             workername = mytask.processorname
             # yield
-            self.processTask(workername, taskdata)
+            self.processTask(workername, *args)
 
     '''
      Takes in a a function object and the function arguments and executes them
